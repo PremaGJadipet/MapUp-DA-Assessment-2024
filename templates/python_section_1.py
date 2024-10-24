@@ -159,7 +159,6 @@ def rotate_and_multiply_matrix(matrix: List[List[int]]) -> List[List[int]]:
             col_sum = sum([rotated[k][j] for k in range(n) if k != i])
             result[i][j] = row_sum + col_sum
 
-    # Your code here
     return result
 
 def time_check(df) -> pd.Series:
