@@ -116,7 +116,7 @@ def polyline_to_dataframe(polyline_str: str) -> pd.DataFrame:
     Returns:
         pd.DataFrame: A DataFrame containing latitude, longitude, and distance in meters.
     """
-       coords = polyline.decode(polyline_str)
+    coords = polyline.decode(polyline_str)
     latitudes, longitudes = zip(*coords)
     distances = [0]
     for i in range(1, len(coords)):
@@ -180,6 +180,6 @@ def time_check(df) -> pd.Series:
     result = df.groupby(["id", "id_2"]).apply(is_complete)
     return result
 
-    # Write your logic here
+  
 
    
