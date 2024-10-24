@@ -11,9 +11,35 @@ def calculate_distance_matrix(df)->pd.DataFrame():
     Returns:
         pandas.DataFrame: Distance matrix
     """
-    # Write your logic here
+    if 'id_start' not in df.columns or 'id_end' not in df.columns or 'distance' not in df.columns:
+        raise ValueError("Dataframe must contain 'id_start', 'id_end', and 'distance' columns")
+    
+    
+    ids = pd.concat([df['id_start'], df['id_end']]).unique()
+    
+    
+    distance_matrix = pd.DataFrame(np.zeros((len(ids), len(ids))), index=ids, columns=ids)
+    
+   
+    for index, row in df.iterrows():
+        distance_matrix.loc[row['id_start'], row['id_end']] = row['distance']
+        distance_matrix.loc[row['id_end'], row['id_start']] = row['distance']  # Symmetric matrix
+    
+    # Calculate cumulative distances using Floyd-Warshall algorithm
+    for k in ids:
+        for i in ids:
+            for j in ids:
+                distance_matrix.loc[i, j] = min(distance_matrix.loc[i, j], 
+                                                distance_matrix.loc[i, k] + distance_matrix.loc[k, j])
+    
+    return distance_matrix
 
-    return df
+
+    df = pd.read_csv('dataset.csv')
+
+
+     distance_matrix = calculate_distance_matrix(df)
+     print(distance_matrix)
 
 
 def unroll_distance_matrix(df)->pd.DataFrame():
@@ -26,9 +52,26 @@ def unroll_distance_matrix(df)->pd.DataFrame():
     Returns:
         pandas.DataFrame: Unrolled DataFrame containing columns 'id_start', 'id_end', and 'distance'.
     """
-    # Write your logic here
-
-    return df
+    if not isinstance(df, pd.DataFrame):
+        raise ValueError("Input must be a pandas DataFrame")
+    
+    # Initialize empty list to store unrolled rows
+    unrolled_rows = []
+    
+    # Unroll distance matrix
+    for i, row_index in enumerate(df.index):
+        for j, col_index in enumerate(df.columns):
+            if row_index != col_index:  # Exclude same id_start to id_end combinations
+                unrolled_rows.append({
+                    'id_start': row_index,
+                    'id_end': col_index,
+                    'distance': df.loc[row_index, col_index]
+                })
+    
+    # Convert unrolled rows to DataFrame
+    unrolled_df = pd.DataFrame(unrolled_rows)
+    
+    return unrolled_df
 
 
 def find_ids_within_ten_percentage_threshold(df, reference_id)->pd.DataFrame():
