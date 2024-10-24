@@ -25,7 +25,6 @@ def calculate_distance_matrix(df)->pd.DataFrame():
         distance_matrix.loc[row['id_start'], row['id_end']] = row['distance']
         distance_matrix.loc[row['id_end'], row['id_start']] = row['distance']  # Symmetric matrix
     
-    # Calculate cumulative distances using Floyd-Warshall algorithm
     for k in ids:
         for i in ids:
             for j in ids:
@@ -55,10 +54,8 @@ def unroll_distance_matrix(df)->pd.DataFrame():
     if not isinstance(df, pd.DataFrame):
         raise ValueError("Input must be a pandas DataFrame")
     
-    # Initialize empty list to store unrolled rows
     unrolled_rows = []
     
-    # Unroll distance matrix
     for i, row_index in enumerate(df.index):
         for j, col_index in enumerate(df.columns):
             if row_index != col_index:  # Exclude same id_start to id_end combinations
@@ -68,7 +65,6 @@ def unroll_distance_matrix(df)->pd.DataFrame():
                     'distance': df.loc[row_index, col_index]
                 })
     
-    # Convert unrolled rows to DataFrame
     df = pd.DataFrame(unrolled_rows)
     
     return df
@@ -126,9 +122,6 @@ def calculate_toll_rate(df)->pd.DataFrame():
     
     for vehicle, coefficient in toll_rate_coefficients.items():
         df[vehicle] = df['distance'] * coefficient
-    
-
-    # Wrie your logic here
 
     return df
 
